@@ -30,6 +30,9 @@ define yum::repofile (
   }
 
   if ($path =~ /\//) {
+    if ($path == '') {
+      fail('Wrong param: $path is empty')
+    }
     $fullpath = $path
   } else {
     $fullpath = "/etc/yum.repos.d/${name}"
@@ -44,9 +47,9 @@ define yum::repofile (
 
   if $content {
     File[$fullpath] { content => $content }
-  }
-
-  if $source {
+  } elsif $source != '' {
     File[$fullpath] { source => $source }
+  } else {
+    fail('Please specify either content or source')
   }
 }
